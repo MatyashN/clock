@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>clock</title>
+    <script src="test.js"></script>
+</head>
+
+<body>
+    <div class="wrap"></div>
+    <div class="onoffswitch">
+        <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="startCheckBox" checked>
+        <label class="onoffswitch-label" for="startCheckBox" onclick="chooseFormat()">
+            <span class="onoffswitch-inner"></span>
+            <span class="onoffswitch-switch"></span>
+        </label>
+    </div>
+    <input type="checkbox" name="anim" class="anim-checkbox" id="animCheckBox">
+    <script>
+        var p1 = document.createElement('p');
+        var p2 = document.createElement('p');
+        var p3 = document.createElement('p');
+        var p4 = document.createElement('p');
+        p1.className = "area";
+        p2.className = "area";
+        p3.className = "area";
+        p4.className = "area";
+        document.body.appendChild(p1);
+        document.body.appendChild(p2);
+        document.body.appendChild(p3);
+        document.body.appendChild(p4);
+        var format;
+        var endDayStr = '';
+        function timer() {
+            return {
+                clock: function() {
+                    p1.classList.remove("x");
+                    anim();
+                    var time = new Date();
+                    options = {
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        second: 'numeric',
+                        hour12: format
+                    };
+                    var timeStr = time.toLocaleString('en-US', options);
+                    p1.innerHTML = timeStr;
+                },
+                calcEndOfTheDay: function (){
+                    p2.classList.remove("x");
+                    var date = new Date();
+                    var endDay = (24*3600*1000 - (+date - date.setHours(0, 0, 0, 0)))/1000;
+                    var h = Math.floor(endDay / 3600);
+                    var m = Math.floor(((endDay / 3600) - Math.floor(endDay / 3600)) * 60);
+                    var s = Math.ceil(endDay - h * 3600 - m * 60);
+                    if (h < 10){h = '0' + h};
+                    if (m < 10){m = '0' + m};
+                    if (s < 10){s = '0' + s};
+                    endDayStr = (h + ':' + m + ':' + s);
+                    p2.innerHTML = endDayStr;
+                    return endDayStr;
+                },
+                calcEndOfTheWeek: function(){
+                    var date = new Date();
+                    var d = ( 7 - date.getDay() );
+                    var endWeekStr = (d + ' days ' + endDayStr)
+                    p3.innerHTML = endWeekStr;
+                },
+                calcEndOfTheMonth: function(){
+                    var date = new Date();
+                    date.setDate(0);
+                    var newDate = new Date();
+                    var d = date.getDate() - newDate.getDate();
+                    var endWeekStr = (d + ' days ' + endDayStr)
+                    p4.innerHTML = endWeekStr;
+                },
+                animation: function() {
+                    p1.classList.add("x");
+                    p2.classList.add("x");
+                }
+            }
+        };
+
+        var timerObj = timer();
+
+        setInterval(timerObj.clock, 1000);
+        setInterval(timerObj.calcEndOfTheDay, 1000);
+        setInterval(timerObj.calcEndOfTheWeek, 1000);
+        setInterval(timerObj.calcEndOfTheMonth, 1000);
+
+        function chooseFormat(){
+            if (startCheckBox.checked) {
+                return format = false;
+            } else {
+                return format = true;
+            }
+        };
+
+        var anim = function (){
+            if (animCheckBox.checked) {
+                setTimeout(timerObj.animation, 500)
+            }
+        };
+    </script>
+
+    <style>
+    p.x{
+        text-shadow:0px 0px 5px #fff,
+                                                 0px 0px 10px #fff,
+                                                 0px 0px 15px #fff,
+                                                 0px 0px 20px #fff,
+                                                 0px 0px 25px #fff,
+                                                 0px 0px 30px #fff;
+                                    transition: 0.5s ease-in-out;
+    }
+        body {
+            background: #00BDFF;
+            font-family: "Courier New", Impact;
+            margin: 0px;
+        }
+        
+        input {
+            position: absolute;
+        }
+        
+        .area {
+            text-align: center;
+            font-size: 5vw;
+            letter-spacing: -7px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #fff;
+            text-shadow:0px 0px 30px #fff,
+                        0px 0px 40px #fff;
+        }
+        
+        .wrap {
+            background: url(http://cat-folio.esy.es/images/overlay.png) repeat fixed;
+            background-size: 1%;
+            width: 100%;
+            height: 100vh;
+            position: absolute;
+            margin: 0px;
+            opacity: 0.5;
+        }
+        
+        .onoffswitch {
+            position: relative;
+            width: 90px;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        
+        .onoffswitch {
+            position: relative;
+            width: 63px;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        
+        .onoffswitch-checkbox {
+            display: none;
+        }
+        
+        .onoffswitch-label {
+            display: block;
+            overflow: hidden;
+            cursor: pointer;
+            border: 1px solid #999999;
+            border-radius: 6px;
+        }
+        
+        .onoffswitch-inner {
+            display: block;
+            width: 200%;
+            margin-left: -100%;
+            transition: margin 0.3s ease-in 0s;
+        }
+        
+        .onoffswitch-inner:before,
+        .onoffswitch-inner:after {
+            display: block;
+            float: left;
+            width: 50%;
+            height: 21px;
+            padding: 0;
+            line-height: 21px;
+            font-size: 15px;
+            color: white;
+            font-family: Trebuchet, Arial, sans-serif;
+            box-sizing: border-box;
+        }
+        
+        .onoffswitch-inner:before {
+            content: "12h";
+            padding-left: 9px;
+            background-color: #181D22;
+            color: #FFFFFF;
+        }
+        
+        .onoffswitch-inner:after {
+            content: "24h";
+            padding-right: 9px;
+            background-color: #181D22;
+            color: #FFFFFF;
+            text-align: right;
+        }
+        
+        .onoffswitch-switch {
+            display: block;
+            width: 3px;
+            height: 3px;
+            margin: 8.5px;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 38px;
+            border-radius: 6px;
+            transition: all 0.3s ease-in 0s;
+            background-color: rgb(2, 255, 58);
+            box-shadow: 0px 0px 1px 1px #13FF00, 0px 0px 5px 2px rgba(3, 255, 13, 0.59), 0px 0px 10px 6px rgba(134, 214, 134, 0.35);
+            border: 1px solid rgba(0, 255, 29, 0.78)
+        }
+        
+        .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+            margin-left: 0;
+        }
+        
+        .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+            right: 0px;
+            background-color: rgb(122, 208, 186);
+            box-shadow: 0px 0px 1px 1px #27A1CA, 0px 0px 5px 2px rgba(39, 161, 202, 0.59), 0px 0px 10px 6px rgba(39, 161, 202, 0.35);
+            border: 1px solid rgba(122, 208, 186, 0.78);
+        }
+    </style>
+</body>
+
+</html>

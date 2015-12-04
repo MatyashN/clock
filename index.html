@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>clock</title>
+    <script src="test.js"></script>
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="onoffswitch">
+            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="startCheckBox" checked>
+            <label class="onoffswitch-label" for="startCheckBox" onclick="checkBox()">
+                <span class="onoffswitch-inner"></span>
+                <span class="onoffswitch-switch"></span>
+            </label>
+        </div>
+        <input type="checkbox" name="anim" class="anim-checkbox" id="animCheckBox">
+    </div>
+    <script>
+        var p = document.createElement('p');
+        p.className = "area";
+        document.body.appendChild(p)
+
+        function timer() {
+            return {
+                clock: function() {
+                    return {
+                        hour24: function() {
+                            p.classList.remove("x");
+                            var time = new Date();
+                            var h = time.getHours();
+                            var m = time.getMinutes();
+                            var s = time.getSeconds();
+                            if (h < 10) {
+                                h = '0' + h
+                            };
+                            if (m < 10) {
+                                m = '0' + m
+                            };
+                            if (s < 10) {
+                                s = '0' + s
+                            };
+                            var timeStr = (h + ':' + m + ':' + s);
+                            p.innerHTML = timeStr;
+                        },
+                        hour12: function() {
+                            p.classList.remove("x");
+                            var time = new Date();
+                            options = {
+                                hour: 'numeric',
+                                minute: 'numeric',
+                                second: 'numeric',
+                                hour12: true
+                            };
+                            var timeStr = time.toLocaleString('en-US', options);
+                            p.innerHTML = timeStr;
+                        }
+                    }
+                },
+                animation: function() {
+                            p.classList.add("x");
+                }
+            }
+        }
+
+        var timerObj = timer();
+        timerObj.clock = timerObj.clock();
+        var timeId12;
+        var timeId24;
+        var anim = timerObj.animation();
+
+        function x() {
+            timerObj.clock.hour12();
+            if (animCheckBox.checked) {
+                setTimeout(timerObj.animation, 500)
+            }
+        };
+
+        function y() {
+            timerObj.clock.hour24();
+            if (animCheckBox.checked) {
+                setTimeout(timerObj.animation, 500)
+            }
+        };
+
+        var start12 = function() {
+            timeId12 = setInterval(x, 1000)
+        };
+        var start24 = function() {
+            timeId24 = setInterval(y, 1000)
+        };
+
+        function checkBox() {
+            if (startCheckBox.checked) {
+                start24();
+                clearInterval(timeId12);
+            } else {
+                start12();
+                clearInterval(timeId24);
+            }
+        };
+
+        /*function x(){
+        	setInterval(start12, 1000)
+        }*/
+
+        /*function runClock( func, x){
+		func();
+		setTimeout(runClock, 1000, func, x)
+	};
+
+	function startHour12(){
+		setTimeout(runClock, 1000, start12, 1)
+	};
+
+	function startHour24(){
+		setTimeout(runClock, 1000, start24, 1)
+	};
+*/
+    </script>
+
+    <style>
+    p.x{
+        text-shadow:0px 0px 5px #fff,
+                                                 0px 0px 10px #fff,
+                                                 0px 0px 15px #fff,
+                                                 0px 0px 20px #fff,
+                                                 0px 0px 25px #fff,
+                                                 0px 0px 30px #fff;
+                                    transition: 0.5s ease-in-out;
+    }
+        body {
+            background: url('http://subtlepatterns.subtlepatterns.netdna-cdn.com/patterns/noisy_net.png') repeat;
+            font-family: "1979", "Courier New", Impact;
+            margin: 0px;
+        }
+        
+        input {
+            position: absolute;
+        }
+        
+        .area {
+            text-align: center;
+            font-size: 5vw;
+            letter-spacing: -7px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #fff;
+            text-shadow:0px 0px 5px #fff,
+                        0px 0px 10px #fff;
+        }
+        
+        .wrap {
+            background: linear-gradient( black, transparent 1px), linear-gradient( 45deg, black, transparent 1px);
+            background-size: 2px 2px;
+            background-position: center center;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 5px;
+            margin: 0px;
+        }
+        
+        .onoffswitch {
+            position: relative;
+            width: 90px;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        
+        .onoffswitch {
+            position: relative;
+            width: 63px;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        
+        .onoffswitch-checkbox {
+            display: none;
+        }
+        
+        .onoffswitch-label {
+            display: block;
+            overflow: hidden;
+            cursor: pointer;
+            border: 1px solid #999999;
+            border-radius: 6px;
+        }
+        
+        .onoffswitch-inner {
+            display: block;
+            width: 200%;
+            margin-left: -100%;
+            transition: margin 0.3s ease-in 0s;
+        }
+        
+        .onoffswitch-inner:before,
+        .onoffswitch-inner:after {
+            display: block;
+            float: left;
+            width: 50%;
+            height: 21px;
+            padding: 0;
+            line-height: 21px;
+            font-size: 15px;
+            color: white;
+            font-family: Trebuchet, Arial, sans-serif;
+            box-sizing: border-box;
+        }
+        
+        .onoffswitch-inner:before {
+            content: "12h";
+            padding-left: 9px;
+            background-color: #181D22;
+            color: #FFFFFF;
+        }
+        
+        .onoffswitch-inner:after {
+            content: "24h";
+            padding-right: 9px;
+            background-color: #181D22;
+            color: #FFFFFF;
+            text-align: right;
+        }
+        
+        .onoffswitch-switch {
+            display: block;
+            width: 3px;
+            height: 3px;
+            margin: 8.5px;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 38px;
+            border-radius: 6px;
+            transition: all 0.3s ease-in 0s;
+            background-color: rgb(2, 255, 58);
+            box-shadow: 0px 0px 1px 1px #13FF00, 0px 0px 5px 2px rgba(3, 255, 13, 0.59), 0px 0px 10px 6px rgba(134, 214, 134, 0.35);
+            border: 1px solid rgba(0, 255, 29, 0.78)
+        }
+        
+        .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+            margin-left: 0;
+        }
+        
+        .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+            right: 0px;
+            background-color: rgb(122, 208, 186);
+            box-shadow: 0px 0px 1px 1px #27A1CA, 0px 0px 5px 2px rgba(39, 161, 202, 0.59), 0px 0px 10px 6px rgba(39, 161, 202, 0.35);
+            border: 1px solid rgba(122, 208, 186, 0.78);
+        }
+    </style>
+</body>
+
+</html>
